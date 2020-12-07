@@ -41,10 +41,6 @@ RUN echo 'alias wp="wp --allow-root"' >>  ~/.bashrc
 RUN a2enmod ssl
 
 
-#WORKDIR /var/www/html/wp-content/plugins
-
-#RUN wp plugin activate rock-convert
-
 
 EXPOSE 8080
 
