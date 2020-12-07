@@ -1,0 +1,26 @@
+version: '3.6'
+services:
+  wordpress:
+    build: 
+      context: ./
+      dockerfile: dockerfile
+    container_name: wordpressRodrigoMoro
+    image: wordpressrodrigochallenge-rock-content
+    volumes:
+       - wordpressdata:/var/www/html
+       - ./rock-convert.2.5.0:/var/www/html/wp-content/plugins/
+    environment:
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=password
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - wordpressNet
+
+volumes:
+  wordpressdata:
+
+networks:
+  wordpressNet:

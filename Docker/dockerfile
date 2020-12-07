@@ -1,0 +1,51 @@
+
+FROM wordpress
+
+
+LABEL maintainer="moro.rodrigo@gmail.com"
+
+LABEL version="1.0"
+
+LABEL name="Rodrigo Moro"
+
+#html folder
+
+WORKDIR /usr/local/etc/php/
+
+COPY ./php.ini /usr/local/etc/php/conf.d/
+
+WORKDIR /var/www/html
+
+COPY ./html /var/www/html
+
+COPY ./rock-convert.2.5.0 /var/www/html/wp-content/plugins/
+
+#CLI
+
+WORKDIR /usr/local/bin/wp
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+RUN chmod +x wp-cli.phar
+
+RUN echo 'alias wp="wp --allow-root"' >>  ~/.bashrc
+
+
+
+# Composer
+
+#RUN curl -sS https://getcomposer.org/installer | php -- \ --install-dir=/usr/bin --filename=composer 
+#&& ln -s $(composer config --global home) /root/composer
+ 
+
+RUN a2enmod ssl
+
+
+#WORKDIR /var/www/html/wp-content/plugins
+
+#RUN wp plugin activate rock-convert
+
+
+EXPOSE 8080
+
+#CMD [ "sh", "-c", "echo $HOME" ]
