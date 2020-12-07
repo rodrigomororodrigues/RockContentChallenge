@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqld-exporter
+  labels:
+    app: mysqld-exporter
+spec:
+  type: ClusterIP
+  ports:
+    - name: http-metrics
+      port: 9104
+selector:
+  app: mysqld-exporter
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysqld-exporter
+  labels:
+    app: mysqld-exporter
+spec:
+  selector:
+    matchLabels:
+      app: mysqld-exporter
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9104"
+      labels:
+        app: mysqld-exporter
+    spec:
+      containers:
+      - name: mysqld-exporter
+        image: prom/mysqld-exporter
+        env:
+        - name: DATA_SOURCE_NAME
+          value: root:passwordbanco@(mysql:3306)/
+        ports:
+        - containerPort: 9104
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysqld-exporter
+  namespace: monitoring
+  labels:
+    monitor-app: mysqld-exporter
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchLabels:
+      app: mysqld-exporter
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: http-metrics
+    interval: 30s
